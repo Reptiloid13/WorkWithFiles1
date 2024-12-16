@@ -4,49 +4,53 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace WWF
 {
-    public class MyException : Exception
+
+    internal class WorkWitFiles
     {
-        public override string Message { get; } = "MyException";
-    }
-    internal class Exception1
-    {
-        public static void Task1()
+        public void DeleteUnisingFiles()
         {
-            Exception[] exceptions = [
-                new DivideByZeroException(), new ArgumentNullException(),
-                new IndexOutOfRangeException(), new OverflowException(),
-                new MyException()
-                ];
-            foreach (var ex in exceptions)
+
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Folder");
+            var rootDir = new DirectoryInfo(path);
+
+            if (!rootDir.Exists) throw new Exception("Папка не существует");
+            Console.WriteLine("Папки: ");
+
+            var dirs = rootDir.GetDirectories();
+
+            foreach (var dir in dirs)
             {
-                try
-                {
-                    throw ex;
-                }
-                catch (DivideByZeroException e)
-                {
-                    Console.WriteLine(e.Message);
-                }
-                catch (AbandonedMutexException e)
-                {
-                    Console.WriteLine(e.Message);
-                }
-                catch (OverflowException e)
-                {
-                    Console.Write(e.Message);
-                }
-                catch (IndexOutOfRangeException e)
-                {
-                    Console.WriteLine(e.Message);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
+                Console.WriteLine(dir.FullName);
+                Console.WriteLine();
+
             }
 
+            var files = rootDir.GetFiles("*", SearchOption.AllDirectories);
+            var filesForDeleting = new List<string>();
+
+            foreach (var file in files)
+            {
+                Console.WriteLine();
+                Console.WriteLine(file.FullName);
+
+                if (HowLongAgoUsed(rootDir))
+                {
+                    filesForDeleting.Add(file.FullName);
+                }
+
+            }
+            PrintItems.ConfirmDeleting(filesForDeleting);
+
+
+        }
+
+        private bool HowLongAgoUsed(DirectoryInfo rootDir)
+        {
+            var span = TimeSpan.FromMinutes(30);
+            return DateTime.Now - rootDir.LastAccessTime > span;
         }
     }
 }

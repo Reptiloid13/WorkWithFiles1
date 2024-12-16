@@ -5,8 +5,8 @@ namespace WWF
     {
         static void Main(string[] args)
         {
-            //Exception1.Task1();
-            Exception2.Task2();
+            var task1 = new WorkWitFiles();
+            task1.DeleteUnisingFiles();
         }
     }
 }
